@@ -1,0 +1,186 @@
+<title>Trägheitsversuch mit Gurt</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: eine Spalte, oben die Versuchsbühne, darunter Steuerung, Phasen und Merksatz */
+:root{
+  --bg:#F5F7F8; --panel:#FFFFFF; --fg:#1E2A30; --muted:#5A6B73; --line:#CBD5DA;
+  --wood:#C08A3E; --wood-d:#8A5A1C; --cart:#2F6FB3; --cart-d:#1D4B7D; --fig:#D9643A; --fig-d:#9A3F1F;
+  --belt:#4E8A1F; --force:#C62F2F; --vel:#2F6FB3; --accent:#2F6FB3; --accent-bg:#E3EEF8;
+  --f-head:"Space Grotesk",system-ui,sans-serif; --f-body:"Atkinson Hyperlegible",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12181B; --panel:#1A2226; --fg:#E4EBEE; --muted:#9AAAB2; --line:#33424A;
+  --wood:#C99550; --wood-d:#E0B172; --cart:#5B98D6; --cart-d:#9CC3EA; --fig:#E57C55; --fig-d:#F2A98C;
+  --belt:#7DBA4A; --force:#EF6A6A; --vel:#6AA8E6; --accent:#6AA8E6; --accent-bg:#1E3247; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12181B; --panel:#1A2226; --fg:#E4EBEE; --muted:#9AAAB2; --line:#33424A;
+  --wood:#C99550; --wood-d:#E0B172; --cart:#5B98D6; --cart-d:#9CC3EA; --fig:#E57C55; --fig-d:#F2A98C;
+  --belt:#7DBA4A; --force:#EF6A6A; --vel:#6AA8E6; --accent:#6AA8E6; --accent-bg:#1E3247; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+h1{font-family:var(--f-head);font-weight:600;font-size:1.7rem;margin:0;text-wrap:balance}
+h2{font-family:var(--f-head);font-weight:500;font-size:1.05rem;margin:0 0 8px}
+.lead{color:var(--muted);margin:4px 0 0;max-width:65ch}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px;overflow-x:auto}
+svg{display:block;width:100%;min-width:520px;height:auto}
+.lbl{font-family:var(--f-body);font-size:12px;fill:var(--muted)}
+.flbl{font-family:var(--f-body);font-size:12px;font-weight:700}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--panel);color:var(--fg);padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-bg);color:var(--accent);font-weight:700}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:8px 14px;border-radius:8px;font:inherit;font-size:14px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--panel);font-weight:700}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.opt{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.range{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.phases{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.phases li{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--muted);transition:border-color .2s,color .2s}
+.phases li.active{border-color:var(--accent);color:var(--fg)}
+.phases b{font-family:var(--f-head);font-weight:500;color:var(--fg);margin-right:6px}
+.merk{background:var(--accent-bg);border-radius:10px;padding:12px 16px}
+.merk p{margin:0}
+.note{font-size:13px;color:var(--muted);margin:0}
+@media (prefers-reduced-motion: reduce){.phases li{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Trägheitsversuch mit Gurt</h1>
+    <p class="lead">Modell zum Crashtest: Ein Wagen mit Knetfigur rollt die Rampe hinunter und prallt gegen einen Holzklotz. V1 ohne Gurt, V2 mit Gummiband als Gurt.</p>
+  </header>
+
+  <div class="stage">
+    <svg id="svg" viewBox="0 0 720 300" role="img" aria-label="Animierter Versuchsaufbau: Rampe, Wagen mit Knetfigur, Holzklotz">
+      <defs>
+        <marker id="hF" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L9 5L1 9Z" fill="var(--force)"/></marker>
+        <marker id="hV" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L9 5L1 9Z" fill="var(--vel)"/></marker>
+        <marker id="hB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1L9 5L1 9Z" fill="var(--belt)"/></marker>
+      </defs>
+      <line x1="0" y1="250" x2="720" y2="250" stroke="var(--muted)" stroke-width="1.2"/>
+      <rect id="books" x="44" y="156" width="58" height="94" fill="var(--line)" stroke="var(--muted)" stroke-width="0.6"/>
+      <text class="lbl" x="44" y="272">Bücher + Brett = Rampe</text>
+      <polygon id="ramp" points="" fill="var(--wood)" stroke="var(--wood-d)" stroke-width="0.6"/>
+      <rect x="560" y="228" width="36" height="22" fill="var(--wood-d)"/>
+      <text class="lbl" x="540" y="272">Holzklotz</text>
+      <g id="cart">
+        <rect x="0" y="-30" width="70" height="22" rx="3" fill="var(--cart)" stroke="var(--cart-d)" stroke-width="0.6"/>
+        <circle cx="14" cy="-6" r="6" fill="var(--fg)"/><circle cx="56" cy="-6" r="6" fill="var(--fg)"/>
+        <polyline id="belt" points="22,-30 25,-44 39,-44 42,-30" fill="none" stroke="var(--belt)" stroke-width="3" stroke-linejoin="round"/>
+      </g>
+      <g id="fig">
+        <rect x="-6" y="-22" width="12" height="22" rx="3" fill="var(--fig)" stroke="var(--fig-d)" stroke-width="0.6"/>
+        <circle cx="0" cy="-30" r="8" fill="var(--fig)" stroke="var(--fig-d)" stroke-width="0.6"/>
+      </g>
+      <g id="vArrows">
+        <line id="vFig" x1="0" y1="0" x2="0" y2="0" stroke="var(--vel)" stroke-width="2.5" marker-end="url(#hV)"/>
+        <line id="vCart" x1="0" y1="0" x2="0" y2="0" stroke="var(--vel)" stroke-width="2.5" marker-end="url(#hV)"/>
+      </g>
+      <g id="forces" style="display:none">
+        <line x1="562" y1="231" x2="522" y2="231" stroke="var(--force)" stroke-width="3" marker-end="url(#hF)"/>
+        <text class="flbl" x="440" y="290" fill="var(--force)">Kraft vom Klotz auf den Wagen</text>
+      </g>
+      <g id="fBelt" style="display:none">
+        <line id="fBeltLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--belt)" stroke-width="3" marker-end="url(#hB)"/>
+        <text class="flbl" x="380" y="150" fill="var(--belt)">Kraft vom Gurt auf die Figur</text>
+      </g>
+      <text id="noForce" class="flbl" x="470" y="150" fill="var(--fig-d)" style="display:none">Auf die Figur wirkt keine bremsende Kraft</text>
+      <text class="lbl" x="150" y="30" id="vLegend">Blauer Pfeil = Geschwindigkeit</text>
+    </svg>
+  </div>
+
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Versuchsvariante">
+      <button id="bV1" aria-pressed="true">V1: ohne Gurt</button>
+      <button id="bV2" aria-pressed="false">V2: mit Gurt</button>
+    </div>
+    <button class="btn primary" id="bStart">Start</button>
+    <button class="btn" id="bReset">Zurücksetzen</button>
+    <label class="opt"><input type="checkbox" id="slow"> Zeitlupe</label>
+    <label class="opt"><input type="checkbox" id="arrows" checked> Pfeile</label>
+    <label class="range" for="h">Rampenhöhe <input type="range" id="h" min="60" max="140" value="100"></label>
+  </div>
+
+  <section>
+    <h2>Was passiert in den drei Phasen?</h2>
+    <ol class="phases">
+      <li id="p1"><b>1 Fahrt</b>Wagen und Figur rollen die Rampe hinunter und haben dieselbe Geschwindigkeit.</li>
+      <li id="p2"><b>2 Aufprall</b>Der Klotz übt eine Kraft auf den Wagen aus. Der Wagen stoppt sofort.</li>
+      <li id="p3"><b>3 Insasse</b><span id="p3t">Ohne Gurt wirkt auf die Figur keine bremsende Kraft. Sie behält ihre Geschwindigkeit und fliegt nach vorne.</span></li>
+    </ol>
+  </section>
+
+  <div class="merk">
+    <p><b>Trägheitsgesetz:</b> Ein Körper behält seine Geschwindigkeit und Bewegungsrichtung bei, solange keine Kraft auf ihn wirkt. Eine Kraft ist die Ursache dafür, dass sich der Bewegungszustand ändert.</p>
+  </div>
+  <p class="note">Nur zur Vorbereitung und für die Absprache mit der Mentorin. Im Unterricht führen die Schüler den Realversuch durch.</p>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const cart=$('cart'),fig=$('fig'),belt=$('belt');
+const TABLE=250,RX0=40,RX1=300,CART_HIT=490,G=600,GF=700;
+let withBelt=false,h=100,raf=null,t0=null,geo=null;
+function setGeo(){
+  const dx=RX1-RX0,L1=Math.hypot(dx,h),sin=h/L1,a=G*sin,tR=Math.sqrt(2*L1/a),vI=a*tR,L2=CART_HIT-RX1;
+  geo={L1,ux:dx/L1,uy:h/L1,ang:Math.atan2(h,dx)*180/Math.PI,a,tR,vI,L2,tF:L2/vI};
+  geo.tI=geo.tR+geo.tF;
+  $('ramp').setAttribute('points',`${RX0},${TABLE-h} ${RX1},${TABLE} ${RX1},${TABLE+6} ${RX0},${TABLE-h+6}`);
+  $('books').setAttribute('y',TABLE-h+6);$('books').setAttribute('height',h-6);
+}
+function pose(p){return p<=geo.L1?{x:RX0+geo.ux*p,y:TABLE-h+geo.uy*p,r:geo.ang}:{x:RX1+(p-geo.L1),y:TABLE,r:0};}
+function arrow(el,x,y,len,r){ if(!$('arrows').checked||len<3){el.setAttribute('x2',x);el.setAttribute('x1',x);el.setAttribute('y1',y);el.setAttribute('y2',y);el.style.display='none';return;}
+  el.style.display='';const rad=(r||0)*Math.PI/180;el.setAttribute('x1',x);el.setAttribute('y1',y);el.setAttribute('x2',x+len*Math.cos(rad));el.setAttribute('y2',y+len*Math.sin(rad));}
+function draw(p,vc,vf,fx){
+  const c=pose(p);
+  cart.setAttribute('transform',`translate(${c.x},${c.y}) rotate(${c.r})`);
+  let F;
+  if(!fx){fig.setAttribute('transform',`translate(${c.x},${c.y}) rotate(${c.r}) translate(32,-30)`);
+    const rad=c.r*Math.PI/180;F={x:c.x+32*Math.cos(rad)+30*Math.sin(rad),y:c.y+32*Math.sin(rad)-30*Math.cos(rad),r:c.r};}
+  else{fig.setAttribute('transform',`translate(${fx.x},${fx.y}) rotate(${fx.r})`);F={x:fx.x,y:fx.y,r:0};}
+  arrow($('vFig'),F.x+10,F.y-30,vf*0.16,F.r);
+  const rad=c.r*Math.PI/180;
+  arrow($('vCart'),c.x+35*Math.cos(rad)+19*Math.sin(rad),c.y+35*Math.sin(rad)-19*Math.cos(rad),vc*0.16,c.r);
+  return F;
+}
+function phase(n){['p1','p2','p3'].forEach((id,i)=>$(id).classList.toggle('active',i+1===n));}
+function hideForces(){$('forces').style.display='none';$('fBelt').style.display='none';$('noForce').style.display='none';}
+function reset(){cancelAnimationFrame(raf);t0=null;setGeo();hideForces();phase(0);draw(0,0,0);}
+function setBelt(b){withBelt=b;$('bV1').setAttribute('aria-pressed',String(!b));$('bV2').setAttribute('aria-pressed',String(b));belt.style.display=b?'':'none';
+  $('p3t').textContent=b?'Mit Gurt übt das Gummiband eine Kraft auf die Figur aus. Sie wird zusammen mit dem Wagen abgebremst und bleibt sitzen.':'Ohne Gurt wirkt auf die Figur keine bremsende Kraft. Sie behält ihre Geschwindigkeit und fliegt nach vorne.';reset();}
+function step(ts){
+  if(t0===null)t0=ts;const k=$('slow').checked?0.25:1,t=(ts-t0)/1000*k,g=geo;
+  if(t<g.tR){const v=g.a*t;draw(0.5*g.a*t*t,v,v);phase(1);}
+  else if(t<g.tI){draw(g.L1+g.vI*(t-g.tR),g.vI,g.vI);phase(1);}
+  else{
+    const tau=t-g.tI,pE=g.L1+g.L2,showF=tau<0.7,c=pose(pE);phase(tau<0.15?2:3);
+    $('forces').style.display=showF&&$('arrows').checked?'':'none';
+    if(withBelt){
+      const lean=22*Math.exp(-tau*6)*Math.sin(Math.min(tau*14,Math.PI));
+      const F=draw(pE,0,0,{x:c.x+32,y:c.y-30,r:lean});
+      $('fBelt').style.display=showF&&$('arrows').checked?'':'none';
+      const fl=$('fBeltLine');fl.setAttribute('x1',F.x+8);fl.setAttribute('y1',F.y-14);fl.setAttribute('x2',F.x-26);fl.setAttribute('y2',F.y-14);
+      if(tau>1.4)return;
+    }else{
+      const x0=CART_HIT+32,y0=TABLE-30,tl=Math.sqrt(2*30/GF);let x,y,r,v;
+      if(tau<tl){x=x0+g.vI*tau;y=y0+0.5*GF*tau*tau;r=Math.min(85,tau/tl*85);v=g.vI;}
+      else{const v0=g.vI*0.4,dec=900,s=Math.min(tau-tl,v0/dec);x=x0+g.vI*tl+v0*s-0.5*dec*s*s;y=TABLE;r=85;v=Math.max(0,v0-dec*(tau-tl));}
+      x=Math.min(x,705);
+      draw(pE,0,v,{x,y,r});
+      $('noForce').style.display=tau<1.0&&$('arrows').checked?'':'none';
+      if(v===0&&tau>tl+0.8)return;
+    }
+  }
+  raf=requestAnimationFrame(step);
+}
+$('bV1').onclick=()=>setBelt(false);$('bV2').onclick=()=>setBelt(true);
+$('bStart').onclick=()=>{reset();raf=requestAnimationFrame(step);};
+$('bReset').onclick=reset;
+$('h').oninput=e=>{h=+e.target.value;reset();};
+$('arrows').onchange=()=>{$('vArrows').style.display=$('arrows').checked?'':'none';$('vLegend').style.display=$('arrows').checked?'':'none';};
+setBelt(false);
+})();
+</script>
