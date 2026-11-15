@@ -1,5 +1,9 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Trägheitsversuch mit Gurt</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Space+Grotesk:wght@500;600&display=swap">
 <style>
@@ -43,13 +47,28 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .merk{background:var(--accent-bg);border-radius:10px;padding:12px 16px}
 .merk p{margin:0}
 .note{font-size:13px;color:var(--muted);margin:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.readout{font-size:14px;color:var(--muted);margin:2px 0 0;min-height:20px}
+.tasks{display:grid;gap:12px;margin:0;padding:0;list-style:none;counter-reset:t}
+.task{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:8px}
+.task-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.op{font-family:var(--f-head);font-weight:600;font-size:13px;color:var(--accent);background:var(--accent-bg);border-radius:6px;padding:2px 8px;letter-spacing:.02em}
+.afb{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.task p{margin:0}
+.task textarea{width:100%;min-height:64px;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;font-size:15px;background:var(--bg);color:var(--fg);resize:vertical}
+.task details{font-size:14px;color:var(--muted)}
+.task summary{cursor:pointer;color:var(--accent)}
+.task details p{margin-top:6px;color:var(--fg)}
+.intro{color:var(--muted);margin:0 0 4px;max-width:65ch}
 @media (prefers-reduced-motion: reduce){.phases li{transition:none}}
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header>
     <h1>Trägheitsversuch mit Gurt</h1>
-    <p class="lead">Modell zum Crashtest: Ein Wagen mit Knetfigur rollt die Rampe hinunter und prallt gegen einen Holzklotz. V1 ohne Gurt, V2 mit Gummiband als Gurt.</p>
+    <p class="lead">Modell zum Crashtest: Ein Wagen mit Knetfigur rollt die Rampe hinunter und prallt gegen einen Holzklotz. V1 ohne Gurt, V2 mit Gummiband als Gurt. Unten findest du Aufgaben zur Simulation.</p>
   </header>
 
   <div class="stage">
@@ -102,6 +121,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <label class="opt"><input type="checkbox" id="arrows" checked> Pfeile</label>
     <label class="range" for="h">Rampenhöhe <input type="range" id="h" min="60" max="140" value="100"></label>
   </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
 
   <section>
     <h2>Was passiert in den drei Phasen?</h2>
@@ -115,7 +135,62 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   <div class="merk">
     <p><b>Trägheitsgesetz:</b> Ein Körper behält seine Geschwindigkeit und Bewegungsrichtung bei, solange keine Kraft auf ihn wirkt. Eine Kraft ist die Ursache dafür, dass sich der Bewegungszustand ändert.</p>
   </div>
-  <p class="note">Nur zur Vorbereitung und für die Absprache mit der Mentorin. Im Unterricht führen die Schüler den Realversuch durch.</p>
+
+  <section>
+    <h2>Aufgaben</h2>
+    <p class="intro">Bearbeite die Aufgaben mithilfe der Simulation. Deine Antworten werden nur in diesem Browser gespeichert.</p>
+    <ol class="tasks">
+      <li class="task">
+        <div class="task-head"><span class="op">1 · Beschreibe</span><span class="afb">AFB I</span></div>
+        <p>Wähle V1 und schalte die Zeitlupe ein. Beschreibe die Bewegung der Figur vor, während und nach dem Aufprall.</p>
+        <label class="sr-only" for="a1">Antwort zu Aufgabe 1</label>
+        <textarea id="a1" data-key="a1" placeholder="Deine Antwort …"></textarea>
+        <details><summary>Lösungshinweis</summary><p>Vor dem Aufprall bewegen sich Wagen und Figur gemeinsam mit gleicher Geschwindigkeit. Beim Aufprall stoppt der Wagen sofort, die Figur bewegt sich weiter nach vorne, fliegt über den Klotz und bleibt schließlich auf dem Tisch liegen.</p></details>
+      </li>
+      <li class="task">
+        <div class="task-head"><span class="op">2 · Vergleiche</span><span class="afb">AFB II</span></div>
+        <p>Führe V2 durch. Vergleiche die Bewegung der Figur in V1 und V2.</p>
+        <label class="sr-only" for="a2">Antwort zu Aufgabe 2</label>
+        <textarea id="a2" data-key="a2" placeholder="Deine Antwort …"></textarea>
+        <details><summary>Lösungshinweis</summary><p>In beiden Versuchen stoppt der Wagen am Klotz. In V1 bewegt sich die Figur weiter und fliegt davon, in V2 kippt sie nur kurz nach vorne und bleibt auf dem Wagen.</p></details>
+      </li>
+      <li class="task">
+        <div class="task-head"><span class="op">3 · Erkläre</span><span class="afb">AFB II</span></div>
+        <p>Schalte die Pfeile ein. Erkläre, warum die Figur in V1 nach vorne fliegt, obwohl niemand sie nach vorne stößt.</p>
+        <label class="sr-only" for="a3">Antwort zu Aufgabe 3</label>
+        <textarea id="a3" data-key="a3" placeholder="Deine Antwort …"></textarea>
+        <details><summary>Lösungshinweis</summary><p>Der Klotz übt nur auf den Wagen eine Kraft aus. Auf die Figur wirkt beim Aufprall keine bremsende Kraft, deshalb behält sie ihre Geschwindigkeit bei und bewegt sich weiter (Trägheit). Erst der Tisch bremst sie später ab.</p></details>
+      </li>
+      <li class="task">
+        <div class="task-head"><span class="op">4 · Stelle eine Vermutung auf und überprüfe sie</span><span class="afb">AFB II</span></div>
+        <p>Vermute, wie sich eine größere Rampenhöhe auf die Strecke auswirkt, die die Figur in V1 hinter den Klotz fliegt. Überprüfe deine Vermutung mit dem Regler. Die Strecke wird unter den Bedienelementen angezeigt.</p>
+        <label class="sr-only" for="a4">Antwort zu Aufgabe 4</label>
+        <textarea id="a4" data-key="a4" placeholder="Deine Antwort …"></textarea>
+        <details><summary>Lösungshinweis</summary><p>Je höher die Rampe, desto schneller ist der Wagen beim Aufprall und desto weiter fliegt die Figur. Sie behält die größere Geschwindigkeit bei, mit der sie unterwegs war.</p></details>
+      </li>
+      <li class="task">
+        <div class="task-head"><span class="op">5 · Begründe</span><span class="afb">AFB II</span></div>
+        <p>Begründe mit dem Begriff „Bewegungszustand“, warum der Gurt die Figur schützt.</p>
+        <label class="sr-only" for="a5">Antwort zu Aufgabe 5</label>
+        <textarea id="a5" data-key="a5" placeholder="Deine Antwort …"></textarea>
+        <details><summary>Lösungshinweis</summary><p>Der Gurt übt eine Kraft auf die Figur aus. Dadurch ändert sich ihr Bewegungszustand gemeinsam mit dem des Wagens: Sie wird mit abgebremst und nicht erst später durch einen Aufprall auf ein Hindernis gestoppt.</p></details>
+      </li>
+      <li class="task">
+        <div class="task-head"><span class="op">6 · Erläutere</span><span class="afb">AFB II</span></div>
+        <p>Erläutere mit dem Trägheitsgesetz, warum stehende Fahrgäste nach vorne kippen, wenn ein Bus plötzlich bremst.</p>
+        <label class="sr-only" for="a6">Antwort zu Aufgabe 6</label>
+        <textarea id="a6" data-key="a6" placeholder="Deine Antwort …"></textarea>
+        <details><summary>Lösungshinweis</summary><p>Der Bus wird durch die Bremsen abgebremst. Auf den Oberkörper der Fahrgäste wirkt zunächst keine bremsende Kraft, er behält seine Geschwindigkeit bei und bewegt sich weiter nach vorne. Nur die Füße werden über den Boden mit abgebremst.</p></details>
+      </li>
+      <li class="task">
+        <div class="task-head"><span class="op">7 · Beurteile</span><span class="afb">AFB III</span></div>
+        <p>Beurteile, inwieweit das Modell (Wagen mit Knetfigur) einen echten Autounfall darstellt. Nenne mindestens zwei Grenzen des Modells.</p>
+        <label class="sr-only" for="a7">Antwort zu Aufgabe 7</label>
+        <textarea id="a7" data-key="a7" placeholder="Deine Antwort …"></textarea>
+        <details><summary>Lösungshinweis</summary><p>Das Modell zeigt richtig, dass der Insasse ohne Gurt seine Geschwindigkeit beibehält. Grenzen: viel kleinere Geschwindigkeiten, kein Lenkrad und keine Scheibe, keine Knautschzone und kein Airbag, der Gummiband-Gurt ist nicht wie ein echter Gurt gebaut, die Figur hat keine Körperteile.</p></details>
+      </li>
+    </ol>
+  </section>
 </div>
 
 <script>
@@ -147,8 +222,9 @@ function draw(p,vc,vf,fx){
   return F;
 }
 function phase(n){['p1','p2','p3'].forEach((id,i)=>$(id).classList.toggle('active',i+1===n));}
+function setReadout(t){$('readout').textContent=t;}
 function hideForces(){$('forces').style.display='none';$('fBelt').style.display='none';$('noForce').style.display='none';}
-function reset(){cancelAnimationFrame(raf);t0=null;setGeo();hideForces();phase(0);draw(0,0,0);}
+function reset(){cancelAnimationFrame(raf);t0=null;setGeo();hideForces();phase(0);draw(0,0,0);setReadout('');}
 function setBelt(b){withBelt=b;$('bV1').setAttribute('aria-pressed',String(!b));$('bV2').setAttribute('aria-pressed',String(b));belt.style.display=b?'':'none';
   $('p3t').textContent=b?'Mit Gurt übt das Gummiband eine Kraft auf die Figur aus. Sie wird zusammen mit dem Wagen abgebremst und bleibt sitzen.':'Ohne Gurt wirkt auf die Figur keine bremsende Kraft. Sie behält ihre Geschwindigkeit und fliegt nach vorne.';reset();}
 function step(ts){
@@ -163,7 +239,7 @@ function step(ts){
       const F=draw(pE,0,0,{x:c.x+32,y:c.y-30,r:lean});
       $('fBelt').style.display=showF&&$('arrows').checked?'':'none';
       const fl=$('fBeltLine');fl.setAttribute('x1',F.x+8);fl.setAttribute('y1',F.y-14);fl.setAttribute('x2',F.x-26);fl.setAttribute('y2',F.y-14);
-      if(tau>1.4)return;
+      if(tau>1.4){setReadout('Die Figur bleibt mit Gurt auf dem Wagen.');return;}
     }else{
       const x0=CART_HIT+32,y0=TABLE-30,tl=Math.sqrt(2*30/GF);let x,y,r,v;
       if(tau<tl){x=x0+g.vI*tau;y=y0+0.5*GF*tau*tau;r=Math.min(85,tau/tl*85);v=g.vI;}
@@ -171,7 +247,7 @@ function step(ts){
       x=Math.min(x,705);
       draw(pE,0,v,{x,y,r});
       $('noForce').style.display=tau<1.0&&$('arrows').checked?'':'none';
-      if(v===0&&tau>tl+0.8)return;
+      if(v===0&&tau>tl+0.8){setReadout('Die Figur liegt '+Math.round((x-596)*0.25)+' cm hinter dem Klotz (Rampenhöhe '+Math.round(h*0.25)+' cm).');return;}
     }
   }
   raf=requestAnimationFrame(step);
@@ -182,5 +258,13 @@ $('bReset').onclick=reset;
 $('h').oninput=e=>{h=+e.target.value;reset();};
 $('arrows').onchange=()=>{$('vArrows').style.display=$('arrows').checked?'':'none';$('vLegend').style.display=$('arrows').checked?'':'none';};
 setBelt(false);
+document.querySelectorAll('textarea[data-key]').forEach(t=>{
+  const k='traegheit-'+t.dataset.key;
+  try{const v=localStorage.getItem(k);if(v)t.value=v;}catch(e){}
+  t.addEventListener('input',()=>{try{localStorage.setItem(k,t.value);}catch(e){}});
+});
 })();
 </script>
+
+</body>
+</html>
